@@ -99,19 +99,35 @@ class Planet():
             raise IndexError()
         
         self.__grid[a, b] = value
-    
 
+    
 class Machine():
     """Machine class"""
-    
-    def __init__(self, x, y, orientation):
+
+    def __init__(self, grid, x, y, orientation):
         self.orientation = orientation
         self.x = x
         self.y = y
+        self.grid = grid
         self.__lost = False
 
-    def __move_forward(self):        
-        pass
+    def __move_forward(self):
+        last_position = (self.x, self.y)
+
+        if self.orientation == Orientations.Y_PLUS_ONE:
+            self.y = self.y + 1 
+        if self.orientation == Orientations.Y_MINUS_ONE:
+            self.y = self.y - 1 
+        if self.orientation == Orientations.X_PLUS_ONE:
+            self.x = self.x + 1 
+        if self.orientation == Orientations.X_MINUS_ONE:
+            self.x = self.x - 1
+
+        try:
+            if self.x < 0 or self.y < 0: raise IndexError()
+            self.grid.get_coordinate(self.x, self.y)
+        except IndexError:
+            pass   
 
     def __turn_left(self):
         self.orientation = self.orientation.turn_left()
@@ -122,12 +138,15 @@ class Machine():
     def process_command(self, command):
         if command not in [e.value for e in Commands]:
             raise Exception("Invalid command")
+
+        if self.__lost is True:
+            return
         
         if Commands(command) == Commands.LEFT:
             self.__turn_left()
         elif Commands(command) == Commands.RIGHT:
             self.__turn_right()
-        elif Commands(command) == Commands.RIGHT:
+        elif Commands(command) == Commands.FORWARD:
             self.__move_forward()
 
 

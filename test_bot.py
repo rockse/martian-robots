@@ -51,10 +51,14 @@ class PlanetTest(unittest.TestCase):
 class MachineTest(unittest.TestCase):
  
     def setUp(self):
-        self.robot = Machine(2, 3, 'L')
+        self.mars = Planet(5, 3)
+        self.robot = Machine(self.mars, 2, 3, 'L')
 
     def test_process_command(self):
+        #self.assertEqual(self.robot.process_command('L'), 0)
         pass
+
+        
 
 
 
