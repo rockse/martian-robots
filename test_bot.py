@@ -1,10 +1,23 @@
 import unittest
 
+from bot import Orientations, Commands
 
-class BotTest(unittest.TestCase):
+class OrientationsTest(unittest.TestCase):
  
     def setUp(self):
-        pass
+        self.orientation = Orientations('N')
+
+    def test_orientations_value(self):
+        self.assertEqual(self.orientation.value, 'N')
+
+
+class CommandsTest(unittest.TestCase):
+ 
+    def setUp(self):
+        self.command = Commands('L')
+
+    def test_commands_value(self):
+        self.assertEqual(self.command.value, 'L')
 
 
 
