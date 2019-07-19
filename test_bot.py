@@ -5,11 +5,27 @@ from bot import Orientations, Commands, Planet, Machine
 class OrientationsTest(unittest.TestCase):
  
     def setUp(self):
-        self.orientation = Orientations('N')
+        self.orientation_n = Orientations('N')
+        self.orientation_s = Orientations('S')
 
     def test_orientations_value(self):
-        self.assertEqual(self.orientation.value, 'N')
+        self.assertEqual(self.orientation_n.value, 'N')
+    
+    def test_turn_right_north(self):
+        self.orientation_n = self.orientation_n.turn_right()
+        self.assertEqual(self.orientation_n.value, 'E')
 
+    def test_turn_right_south(self):
+        self.orientation_s = self.orientation_s.turn_right()
+        self.assertEqual(self.orientation_s.value, 'W')
+
+    def test_turn_left_north(self):
+        self.orientation_n = self.orientation_n.turn_left()
+        self.assertEqual(self.orientation_n.value, 'W')
+
+    def test_turn_left_south(self):
+        self.orientation_s = self.orientation_s.turn_left()
+        self.assertEqual(self.orientation_s.value, 'E')
 
 class CommandsTest(unittest.TestCase):
  
@@ -52,12 +68,29 @@ class MachineTest(unittest.TestCase):
  
     def setUp(self):
         self.mars = Planet(5, 3)
-        self.robot = Machine(self.mars, 2, 3, 'L')
-
+        self.orientation1 = Orientations('E')
+        self.robot1 = Machine(self.mars, 1, 1, self.orientation1)
+        self.orientation2 = Orientations('N')
+        self.robot2 = Machine(self.mars, 3, 2, self.orientation2)
+        self.orientation3 = Orientations('N')
+        self.robot3 = Machine(self.mars, 3, 2, self.orientation3)
+    
     def test_process_command(self):
-        #self.assertEqual(self.robot.process_command('L'), 0)
-        pass
+        commands = ['R', 'F', 'R', 'F', 'R', 'F', 'R', 'F']
+        self.robot1.processor(commands)
+        self.assertEqual(str(self.robot1), '1 1 E')
 
+    def test_process_command_for_lost_bot(self):
+        commands = ['F', 'R', 'R', 'F', 'L', 'L', 'F', 'F', 'R', 'R', 'F', 'L', 'L']
+        self.robot2.processor(commands)
+        self.assertEqual(str(self.robot2), '3 3 N LOST')
+
+    def test_process_command_for_scent_grid_and_bot_not_lost(self):
+        commands = ['F', 'R', 'R', 'F', 'L', 'L', 'F', 'F', 'R', 'R', 'F', 'L', 'L']
+        self.robot2.processor(commands)
+        commands =  commands + ['F', 'R']
+        self.robot3.processor(commands)
+        self.assertEqual(str(self.robot3), '3 3 E')
         
 
 

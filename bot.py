@@ -127,7 +127,12 @@ class Machine():
             if self.x < 0 or self.y < 0: raise IndexError()
             self.grid.get_coordinate(self.x, self.y)
         except IndexError:
-            pass   
+            if self.grid.get_coordinate(*last_position) == 0:
+                self.x, self.y = last_position
+            else:
+                self.x, self.y = last_position
+                self.grid.set_coordinate(self.x, self.y, 0)
+                self.__lost = True 
 
     def __turn_left(self):
         self.orientation = self.orientation.turn_left()
@@ -135,12 +140,11 @@ class Machine():
     def __turn_right(self):
         self.orientation = self.orientation.turn_right()
 
-    def process_command(self, command):
+    def __process_command(self, command):
         if command not in [e.value for e in Commands]:
             raise Exception("Invalid command")
 
-        if self.__lost is True:
-            return
+        if self.__lost is True: return
         
         if Commands(command) == Commands.LEFT:
             self.__turn_left()
@@ -148,6 +152,14 @@ class Machine():
             self.__turn_right()
         elif Commands(command) == Commands.FORWARD:
             self.__move_forward()
+
+    def processor(self, commands):
+        for c in commands:
+            self.__process_command(c)
+    
+    def __str__(self):
+        description = ' '.join([str(self.x), str(self.y), self.orientation.value, 'LOST' if self.__lost else ''])
+        return description.strip()
 
 
 if __name__ == '__main__':
