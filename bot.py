@@ -59,8 +59,8 @@ class Planet():
         pass
     
 
-class Robot():
-    """Robot class"""
+class Machine():
+    """Machine class"""
     
     def __init__(self, x, y, orientation):
         self.orientation = orientation
