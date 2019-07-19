@@ -99,8 +99,6 @@ class MachineTest(unittest.TestCase):
         commands =  commands + ['F', 'R']
         self.robot3.processor(commands)
         self.assertEqual(str(self.robot3), '3 3 E')
-        
-
 
 
 if __name__ == '__main__':

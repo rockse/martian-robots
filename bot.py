@@ -173,11 +173,54 @@ def analyze_grid_coordinates(value):
 
     return (clean_value[0], clean_value[1])
 
+def analyze_robot_position(value):
+    if len(value.split()) != 3:
+        raise click.BadParameter('Please enter in proper format 3 5 N')
+    
+    try:
+        clean_value_coordinates = [int(s) for s in value.split()[:2]]
+    except:
+        raise click.BadParameter(f'Coordinates are wrong. {Orientations.help()}. Please enter in proper format 3 5 N')
+
+    try:
+        if not value.split()[2] in [e.value for e in Orientations]: 
+            raise click.BadParameter('Orientation is wrong. Please enter in proper format 3 5 N')
+        clean_value_position = value.split()[2]
+    except:
+        raise click.BadParameter('Orientation is wrong. Please enter in proper format 3 5 N')
+    
+    clean_value = clean_value_coordinates + [clean_value_position]
+    return (clean_value[0], clean_value[1], clean_value[2])
+    
+
+def analyze_robot_command(value):
+    if len(value) > 100:
+        raise click.BadParameter('Please enter less than or equal to 100 commands')
+
+    if not set(value).issubset(''.join([e.value for e in Commands])):
+        raise click.BadParameter('Please enter commands from L, R, F LRLRF')
+     
+    return list(value)
+
 @click.command()
 def main():
-    grid_coordinates = click.prompt(text='Enter Mars size? (e.g. 4 5) -', value_proc=analyze_grid_coordinates)
+    grid_coordinates = click.prompt(text='Enter Mars size (e.g. 4 5) -', value_proc=analyze_grid_coordinates)
     mars = Planet(*grid_coordinates)
+
+    while True:
+        *robot_coordinates, robot_orientation = click.prompt(
+            text=f'Enter Robot position (e.g. 3 4 N) -',
+            value_proc=analyze_robot_position
+        )
+        robot = Machine(mars, *robot_coordinates, Orientations(robot_orientation))
+        
+        robot_commands = click.prompt(
+            text=f'Enter instruction for Robot (e.g. LRLRF) -', 
+            value_proc=analyze_robot_command
+        )
+        robot.processor(robot_commands)
+        click.secho(message=str(robot), fg='green')
 
 
 if __name__ == '__main__':
-    pass
+    main()
