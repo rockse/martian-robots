@@ -27,6 +27,10 @@ class OrientationsTest(unittest.TestCase):
         self.orientation_s = self.orientation_s.turn_left()
         self.assertEqual(self.orientation_s.value, 'E')
 
+    def test_invalid_orientation(self):
+        with self.assertRaises(ValueError):
+            Orientations('I')
+
 class CommandsTest(unittest.TestCase):
  
     def setUp(self):
@@ -34,6 +38,10 @@ class CommandsTest(unittest.TestCase):
 
     def test_commands_value(self):
         self.assertEqual(self.command.value, 'L')
+    
+    def test_invalid_command(self):
+        with self.assertRaises(ValueError):
+            Commands('I')
 
 class PlanetTest(unittest.TestCase):
  
