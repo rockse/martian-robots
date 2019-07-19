@@ -2,7 +2,7 @@ import numpy as np
 
 from enum import Enum
 
-ALLOWED_COORDINATE = 50
+ALLOWED_COORDINATE = 51
 
 class Orientations(Enum):
     """Available Orientations"""
@@ -35,6 +35,11 @@ class Orientations(Enum):
             return self.X_PLUS_ONE
 
         raise ValueError
+    
+    @classmethod
+    def help(cls):
+        return f'''Avaiable commands are {cls.X_PLUS_ONE}, {cls.X_MINUS_ONE}, 
+            {cls.Y_PLUS_ONE} and {cls.Y_MINUS_ONE}'''
 
 
 class Movement():
@@ -45,7 +50,10 @@ class Commands(Enum):
     LEFT = "L"
     RIGHT = "R"
     FORWARD = "F"
-    pass
+    
+    @classmethod
+    def help(cls):
+        return f'Avaiable commands are {cls.LEFT}, {cls.RIGHT} and {cls.FORWARD}'
 
 class Planet():
     """Planet is a rectangular grid
@@ -58,7 +66,7 @@ class Planet():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.__grid = np.ones((x, y))
+        self.__grid = np.ones((x+1, y+1), dtype='int')
 
     @property
     def x(self):
@@ -67,7 +75,7 @@ class Planet():
     @x.setter
     def x(self, v):
         if not isinstance(v, int) or v not in range(ALLOWED_COORDINATE): 
-            raise Exception("x coordinate can be from 0 to 50")
+            raise ValueError("x coordinate can be from 0 to 50")
         self._x = v
 
     @property
@@ -77,11 +85,20 @@ class Planet():
     @y.setter
     def y(self, v):
         if not isinstance(v, int) or v not in range(ALLOWED_COORDINATE):
-            raise Exception("y coordinate can be from 0 to 50")
+            raise ValueError("y coordinate can be from 0 to 50")
         self._y = v
 
-    def __update_grid_accessibility(self, x, y):
-        pass
+    def get_coordinate(self, a, b):
+        if a not in range(ALLOWED_COORDINATE) or a not in range(ALLOWED_COORDINATE): 
+            raise IndexError()
+        
+        return self.__grid[a, b]
+
+    def set_coordinate(self, a, b, value):
+        if a not in range(ALLOWED_COORDINATE) or a not in range(ALLOWED_COORDINATE): 
+            raise IndexError()
+        
+        self.__grid[a, b] = value
     
 
 class Machine():
