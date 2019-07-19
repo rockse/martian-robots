@@ -22,7 +22,7 @@ class Orientations(Enum):
         if self.name == "Y_PLUS_ONE":
             return self.X_PLUS_ONE
 
-        raise ValueError
+        raise ValueError('Orientation is not defined')
             
     
     def turn_left(self):
@@ -35,7 +35,7 @@ class Orientations(Enum):
         if self.name == "Y_MINUS_ONE":
             return self.X_PLUS_ONE
 
-        raise ValueError
+        raise ValueError('Orientation is not defined')
     
     @classmethod
     def help(cls):
@@ -89,12 +89,14 @@ class Planet():
             raise ValueError("y coordinate can be from 0 to 50")
         self._y = v
 
+    # Get specific coordinate of the grid
     def get_coordinate(self, a, b):
         if a not in range(ALLOWED_COORDINATE) or a not in range(ALLOWED_COORDINATE): 
             raise IndexError()
         
         return self.__grid[a, b]
 
+    # Set specific coordinate of the grid
     def set_coordinate(self, a, b, value):
         if a not in range(ALLOWED_COORDINATE) or a not in range(ALLOWED_COORDINATE): 
             raise IndexError()
@@ -128,8 +130,10 @@ class Machine():
             if self.x < 0 or self.y < 0: raise IndexError()
             self.grid.get_coordinate(self.x, self.y)
         except IndexError:
+            # If scented location on grid
             if self.grid.get_coordinate(*last_position) == 0:
                 self.x, self.y = last_position
+            # When machine is LOST
             else:
                 self.x, self.y = last_position
                 self.grid.set_coordinate(self.x, self.y, 0)
@@ -164,30 +168,31 @@ class Machine():
 
 def analyze_grid_coordinates(value):
     if len(value.split()) != 2:
-        raise click.BadParameter('Please enter in proper format 4 6')
+        raise click.BadParameter('Please enter in proper format -: 4 6')
     
     try:
         clean_value = [int(s) for s in value.split()]
     except:
-        raise click.BadParameter(f'Please enter in proper format and {ALLOWED_COORDINATE} - 4 6')
+        raise click.BadParameter(f'Please enter in proper format and <= {ALLOWED_COORDINATE} -: 4 6')
 
     return (clean_value[0], clean_value[1])
 
+
 def analyze_robot_position(value):
     if len(value.split()) != 3:
-        raise click.BadParameter('Please enter in proper format 3 5 N')
+        raise click.BadParameter('Please enter in proper format - 3 5 N')
     
     try:
         clean_value_coordinates = [int(s) for s in value.split()[:2]]
     except:
-        raise click.BadParameter(f'Coordinates are wrong. {Orientations.help()}. Please enter in proper format 3 5 N')
+        raise click.BadParameter(f'Coordinates are wrong. {Orientations.help()}. Please enter in proper format -: 3 5 N')
 
     try:
         if not value.split()[2] in [e.value for e in Orientations]: 
-            raise click.BadParameter('Orientation is wrong. Please enter in proper format 3 5 N')
+            raise click.BadParameter('Orientation is wrong. Please enter in proper format -: 3 5 N')
         clean_value_position = value.split()[2]
     except:
-        raise click.BadParameter('Orientation is wrong. Please enter in proper format 3 5 N')
+        raise click.BadParameter('Orientation is wrong. Please enter in proper format -: 3 5 N')
     
     clean_value = clean_value_coordinates + [clean_value_position]
     return (clean_value[0], clean_value[1], clean_value[2])
@@ -198,7 +203,7 @@ def analyze_robot_command(value):
         raise click.BadParameter('Please enter less than or equal to 100 commands')
 
     if not set(value).issubset(''.join([e.value for e in Commands])):
-        raise click.BadParameter('Please enter commands from L, R, F LRLRF')
+        raise click.BadParameter(f'Please enter commands. {Commands.help()} -: LRLRF')
      
     return list(value)
 
@@ -206,20 +211,25 @@ def analyze_robot_command(value):
 def main():
     grid_coordinates = click.prompt(text='Enter Mars size (e.g. 4 5) -', value_proc=analyze_grid_coordinates)
     mars = Planet(*grid_coordinates)
+    robot_id = 1
 
     while True:
         *robot_coordinates, robot_orientation = click.prompt(
-            text=f'Enter Robot position (e.g. 3 4 N) -',
+            text=f'Enter Robot {robot_id} position (e.g. 3 4 N) -',
             value_proc=analyze_robot_position
         )
         robot = Machine(mars, *robot_coordinates, Orientations(robot_orientation))
         
         robot_commands = click.prompt(
-            text=f'Enter instruction for Robot (e.g. LRLRF) -', 
+            text=f'Enter instruction for Robot {robot_id} (e.g. LRLRF) -', 
             value_proc=analyze_robot_command
         )
         robot.processor(robot_commands)
+
+        click.secho(message=f'<=== Final position of Robot {robot_id} ==>', fg='green')
         click.secho(message=str(robot), fg='green')
+
+        robot_id += 1
 
 
 if __name__ == '__main__':
