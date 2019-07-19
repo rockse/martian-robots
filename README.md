@@ -18,7 +18,7 @@ The Red Badger Robot Challenge
 
  ## Notes
 - Wanted to add validation is `Machine` is off-grid initially using getter, setter as in `Planet`
-- Wanted to add more tests and mock data in a file
+- Wanted to add more tests for validators and mock data in a file
 - Wanted to refactor some validations, also wanted to keep all validation messages in a single file
 - Spent roughly ~3.5hrs. Haven't used click much in the past so needed to read some docs
 
