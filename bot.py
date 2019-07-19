@@ -61,7 +61,24 @@ class Planet():
 
 class Robot():
     """Robot class"""
-    pass
+    
+    def __init__(self, x, y, orientation):
+        self.orientation = orientation
+        self.x = x
+        self.y = y
+        self.__lost = False
+
+    def __move_forward(self):        
+        pass
+
+    def __turn_left(self):
+        pass
+
+    def __turn_right(self):
+        pass
+
+    def process_command(self, command):
+        pass
 
 
 if __name__ == '__main__':
