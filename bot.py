@@ -1,4 +1,5 @@
 import numpy as np
+import click
 
 from enum import Enum
 
@@ -160,6 +161,22 @@ class Machine():
     def __str__(self):
         description = ' '.join([str(self.x), str(self.y), self.orientation.value, 'LOST' if self.__lost else ''])
         return description.strip()
+
+def analyze_grid_coordinates(value):
+    if len(value.split()) != 2:
+        raise click.BadParameter('Please enter in proper format 4 6')
+    
+    try:
+        clean_value = [int(s) for s in value.split()]
+    except:
+        raise click.BadParameter(f'Please enter in proper format and {ALLOWED_COORDINATE} - 4 6')
+
+    return (clean_value[0], clean_value[1])
+
+@click.command()
+def main():
+    grid_coordinates = click.prompt(text='Enter Mars size? (e.g. 4 5) -', value_proc=analyze_grid_coordinates)
+    mars = Planet(*grid_coordinates)
 
 
 if __name__ == '__main__':
