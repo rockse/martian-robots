@@ -11,6 +11,31 @@ class Orientations(Enum):
     Y_PLUS_ONE = "N"
     Y_MINUS_ONE = "S"
 
+    def turn_right(self):
+        if self.name == "X_PLUS_ONE":
+            return self.Y_MINUS_ONE
+        if self.name == "Y_MINUS_ONE":
+            return self.X_MINUS_ONE
+        if self.name == "X_MINUS_ONE":
+            return self.Y_PLUS_ONE
+        if self.name == "Y_PLUS_ONE":
+            return self.X_PLUS_ONE
+
+        raise ValueError
+            
+    
+    def turn_left(self):
+        if self.name == "X_PLUS_ONE":
+            return self.Y_PLUS_ONE
+        if self.name == "Y_PLUS_ONE":
+            return self.X_MINUS_ONE
+        if self.name == "X_MINUS_ONE":
+            return self.Y_MINUS_ONE
+        if self.name == "Y_MINUS_ONE":
+            return self.X_PLUS_ONE
+
+        raise ValueError
+
 
 class Movement():
     pass
@@ -72,13 +97,21 @@ class Machine():
         pass
 
     def __turn_left(self):
-        pass
+        self.orientation = self.orientation.turn_left()
 
     def __turn_right(self):
-        pass
+        self.orientation = self.orientation.turn_right()
 
     def process_command(self, command):
-        pass
+        if command not in [e.value for e in Commands]:
+            raise Exception("Invalid command")
+        
+        if Commands(command) == Commands.LEFT:
+            self.__turn_left()
+        elif Commands(command) == Commands.RIGHT:
+            self.__turn_right()
+        elif Commands(command) == Commands.RIGHT:
+            self.__move_forward()
 
 
 if __name__ == '__main__':
